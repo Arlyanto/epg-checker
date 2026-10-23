@@ -635,13 +635,13 @@ st.markdown(toggle_ui, unsafe_allow_html=True)
 toggle_js = """
 <script>
 setTimeout(function() {
-    const doc = window.parent.document;
+    const doc = document;
     const toggle = doc.getElementById('custom-theme-toggle');
 
     if (toggle && !toggle.dataset.jsAttached) {
         toggle.dataset.jsAttached = "true";
 
-        const savedTheme = window.parent.localStorage.getItem('epg-checker-theme');
+        const savedTheme = localStorage.getItem('epg-checker-theme');
         let isLight = false;
         
         if (savedTheme === 'light') {
@@ -669,13 +669,13 @@ setTimeout(function() {
         toggle.addEventListener('change', function(e) {
             const isNowLight = e.target.checked;
             applyTheme(isNowLight);
-            window.parent.localStorage.setItem('epg-checker-theme', isNowLight ? 'light' : 'dark');
+            localStorage.setItem('epg-checker-theme', isNowLight ? 'light' : 'dark');
         });
     }
 }, 100);
 </script>
 """
-st.components.v1.html(toggle_js, height=0)
+st.html(toggle_js, unsafe_allow_javascript=True)
 
 animasi_loading = """
 <style>
@@ -1407,39 +1407,55 @@ if st.button("Run Program", type="primary", use_container_width=True):
         """
         st.markdown(ui_sukses, unsafe_allow_html=True)
         
-        st.components.v1.html(f"""
-            <script>
-                const existingOverlay = window.parent.document.getElementById('success-checkmark-overlay');
-                if (existingOverlay) {{ existingOverlay.remove(); }}
-                const overlay = window.parent.document.createElement('div');
-                overlay.id = 'success-checkmark-overlay';
-                overlay.style.position = 'fixed';
-                overlay.style.top = '0';
-                overlay.style.left = '0';
-                overlay.style.width = '100vw';
-                overlay.style.height = '100vh';
-                overlay.style.backgroundColor = 'rgba(15, 15, 15, 0.85)';
-                overlay.style.backdropFilter = 'blur(8px)';
-                overlay.style.display = 'flex';
-                overlay.style.flexDirection = 'column';
-                overlay.style.justifyContent = 'center';
-                overlay.style.alignItems = 'center';
-                overlay.style.zIndex = '999999';
-                overlay.style.opacity = '0';
-                overlay.style.transition = 'opacity 0.4s ease';
-
-                overlay.innerHTML = `
-                    <style>@keyframes popInCheck {{ 0% {{ transform: scale(0.5); opacity: 0; }} 70% {{ transform: scale(1.1); opacity: 1; }} 100% {{ transform: scale(1); opacity: 1; }} }} @keyframes slideUpText {{ 0% {{ transform: translateY(20px); opacity: 0; }} 100% {{ transform: translateY(0); opacity: 1; }} }}</style>
-                    <div style="background: linear-gradient(135deg, #00b09b, #96c93d); border-radius: 50%; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(150, 201, 61, 0.4); animation: popInCheck 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;">
-                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    </div>
-                    <h2 style="color: white; font-family: 'Poppins', sans-serif; font-size: 36px; font-weight: 800; margin-top: 25px; animation: slideUpText 0.5s ease forwards 0.2s; opacity: 0; letter-spacing: 1px;">100% SYNCED</h2>
-                `;
-                window.parent.document.body.appendChild(overlay);
-                setTimeout(() => {{ overlay.style.opacity = '1'; }}, 30);
-                setTimeout(() => {{
-                    overlay.style.opacity = '0';
-                    setTimeout(() => {{ if (window.parent.document.body.contains(overlay)) {{ window.parent.document.body.removeChild(overlay); }} }}, 400); 
-                }}, 3000);
-            </script>
-        """, height=0)
+        # CSS-only success overlay, rendered via st.markdown (not st.html+JS).
+        # Streamlit 1.59 does not reliably re-execute JS in st.html on
+        # conditional/rerun blocks, and it dedupes identical markdown so a static
+        # animation would only play once. To make it replay on every run, the
+        # keyframe names embed a unique-per-render token, which both forces
+        # Streamlit to treat the block as new content and restarts the animation.
+        _ov = int(time.time() * 1000)
+        st.markdown(f"""
+        <style>
+        #epg-success-overlay {{
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(15, 15, 15, 0.85);
+            -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 999999; opacity: 0; pointer-events: none;
+            animation: epgOverlayLife{_ov} 3.6s ease forwards;
+        }}
+        @keyframes epgOverlayLife{_ov} {{
+            0%   {{ opacity: 0; visibility: visible; }}
+            8%   {{ opacity: 1; visibility: visible; }}
+            88%  {{ opacity: 1; visibility: visible; }}
+            100% {{ opacity: 0; visibility: hidden; }}
+        }}
+        @keyframes epgPopInCheck{_ov} {{
+            0%   {{ transform: scale(0.5); opacity: 0; }}
+            70%  {{ transform: scale(1.1); opacity: 1; }}
+            100% {{ transform: scale(1);   opacity: 1; }}
+        }}
+        @keyframes epgSlideUpText{_ov} {{
+            0%   {{ transform: translateY(20px); opacity: 0; }}
+            100% {{ transform: translateY(0);    opacity: 1; }}
+        }}
+        #epg-success-overlay .epg-check-circle {{
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            border-radius: 50%; width: 120px; height: 120px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 30px rgba(150, 201, 61, 0.4);
+            animation: epgPopInCheck{_ov} 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }}
+        #epg-success-overlay .epg-synced-text {{
+            color: white; font-family: 'Poppins', sans-serif; font-size: 36px;
+            font-weight: 800; margin-top: 25px; letter-spacing: 1px;
+            animation: epgSlideUpText{_ov} 0.5s ease forwards 0.2s; opacity: 0;
+        }}
+        </style>
+        <div id="epg-success-overlay">
+            <div class="epg-check-circle">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h2 class="epg-synced-text">100% SYNCED</h2>
+        </div>
+        """, unsafe_allow_html=True)
