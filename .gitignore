@@ -1,0 +1,27 @@
+# === Secrets & credentials (NEVER commit) ===
+credentials.json
+cookies.json
+svc-acc.zip
+.env
+*.pem
+*.key
+
+# Streamlit secrets
+.secrets/
+.streamlit/secrets.toml
+
+# Browser automation profiles (contain session data)
+firefox_cms_profile/
+cms_profile/
+Profil_Bot/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store
