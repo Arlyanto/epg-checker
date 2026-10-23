@@ -87,9 +87,8 @@ daily chore. This tool automates it end-to-end.
 
 | File | Role |
 | --- | --- |
-| `app.py` | Interactive Streamlit dashboard (verify a channel, sync CMS data back to Sheets). |
+| `daily_generator.py` | Interactive Streamlit dashboard (verify a channel, sync CMS data back to Sheets). The main application. |
 | `automation/epg_dispatcher.py` | Unattended daily bot — checks *all* channels for today & tomorrow and reports to Google Chat. |
-| `epg_sync_checker.py` | Minimal CLI checker (simplest version of the core comparison). |
 
 ## 🚀 Quick Start
 
@@ -104,7 +103,7 @@ pip install -r requirements.txt
 ### 2. Run in Demo Mode (no setup needed) 🎉
 
 ```bash
-streamlit run app.py
+streamlit run daily_generator.py
 ```
 
 Without credentials, the app automatically runs in **Demo Mode** using a built-in
@@ -115,7 +114,7 @@ sample schedule so you can explore every part of the UI and the validation engin
 | Secret | Where to put it | Notes |
 | --- | --- | --- |
 | Google Sheets service account | `credentials.json` (repo root) **or** `.streamlit/secrets.toml` under `[gcp_service_account]` | Share your spreadsheets with the service-account email. |
-| Spreadsheet URLs | `URL_SPORT` / `URL_NON_SPORT` constants in `app.py` | One spreadsheet per category, one tab per channel. |
+| Spreadsheet URLs | `URL_SPORT` / `URL_NON_SPORT` constants in `daily_generator.py` | One spreadsheet per category, one tab per channel. |
 | Session cookie | `cookies.json` → `{"cookie_string": "..."}` | Needed for the CMS section of the dashboard. |
 | Webhook URL | `GOOGLE_CHAT_WEBHOOK` environment variable | Used by the alert bot (never hardcode it). |
 
@@ -125,13 +124,17 @@ sample schedule so you can explore every part of the UI and the validation engin
 
 ```
 epg-sync-checker/
-├── app.py                       # Streamlit dashboard (main app)
-├── epg_sync_checker.py          # Minimal CLI comparison script
+├── daily_generator.py           # Main app — Streamlit dashboard
 ├── automation/
 │   └── epg_dispatcher.py        # Scheduled full-catalog checker + Google Chat alerts
+├── Mulai_EPG_Checker.bat        # One-click launcher (Windows)
+├── setup_firefox_profile.py     # One-time CMS login session setup (Firefox)
 ├── custom_channels.json         # User-defined channel → live stream ID map
+├── packages.txt                 # System packages (Debian/Ubuntu) for Chromium
 ├── requirements.txt
+├── logo_v.jpeg                  # Favicon
 ├── bg_dark.png / bg_light.png   # Theme backgrounds
+├── mata_robot.png               # Design asset
 └── README.md
 ```
 
