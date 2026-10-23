@@ -1,169 +1,167 @@
-# 📺 EPG Sync Checker
+# 📺 EPG Checker
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![Selenium](https://img.shields.io/badge/Selenium-Automation-yellow)](https://www.selenium.dev/)
 [![Pandas](https://img.shields.io/badge/pandas-Data%20Processing-150458?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 
-**Internal-grade quality assurance tooling for live-streaming TV schedules (EPG).**
-A Streamlit dashboard + headless-browser automation that verifies, validates, and
-synchronizes the Electronic Program Guide (EPG) of a live-streaming platform
-against its broadcast CMS — every single day, automatically.
+**Alat quality assurance untuk jadwal siaran TV live-streaming.**
+Dashboard Streamlit + otomasi browser headless yang memverifikasi, memvalidasi, dan
+mensinkronkan Electronic Program Guide (EPG) sebuah platform live-streaming
+dengan CMS siarannya — setiap hari, secara otomatis.
 
-> 🧪 **This is a sanitized showcase version.** All company data (spreadsheet IDs,
-> CMS endpoints, channel catalogs, session cookies, service-account keys, and
-> webhook URLs) has been replaced with placeholders or sample data.
+> 🧪 **Ini adalah versi showcase yang sudah disanitasi.** Semua data perusahaan
+> (ID spreadsheet, endpoint CMS, katalog channel, cookie session, kunci
+> service account, dan URL webhook) sudah diganti dengan placeholder atau data contoh.
 
 ---
 
-## 🎯 The Problem
+## 🎯 Masalah yang Dipecahkan
 
-A live-streaming platform publishes dozens of linear (24/7) TV channels. Every day,
-the editorial team schedules hundreds of programs in a Google Sheets EPG, which then
-gets pushed to the public website and the internal broadcast CMS.
+Sebuah platform live-streaming menyiarkan puluhan channel TV linear (24/7). Setiap
+hari, tim editorial menjadwalkan ratusan program di Google Sheets (EPG), yang lalu
+dipublish ke website publik dan CMS internal.
 
-When the EPG and the CMS drift apart, viewers see:
-- ❌ Black screen / dead air during gaps in the schedule
-- ❌ The wrong program at the wrong time
-- ❌ Programs that never air at all
+Ketika EPG dan CMS tidak sinkron, penonton melihat:
+- ❌ Layar mati / dead air karena ada celah jadwal
+- ❌ Program yang salah di jam yang salah
+- ❌ Program yang tidak pernah tayang sama sekali
 
-Checking this **manually across ~40 channels × 2 days** was a slow, error-prone,
-daily chore. This tool automates it end-to-end.
+Pengecekan **manual untuk ~40 channel × 2 hari** adalah pekerjaan lambat dan rawan
+salah, setiap hari. Tool ini mengotomasikannya dari ujung ke ujung.
 
-## ✨ Features
+## ✨ Fitur Utama
 
-| Feature | Description |
+| Fitur | Deskripsi |
 | --- | --- |
-| 🔍 **Automated EPG Verification** | Cross-checks spreadsheet schedules against the live website + CMS for *today* and *tomorrow*. |
-| ⏱️ **Gap Detector Engine** | Flags every hole between two consecutive programs, including a 1-minute tolerance rule. |
-| 🌙 **End-of-Day Coverage Check** | Detects schedules that don't reach midnight (`23:59` / cross-midnight), a classic cause of dead air. |
-| 🧠 **Fuzzy Title Matching** | Normalization pipeline (accents, quotes, dashes, casing) + keyword intersection, so "FA Cup: Man Utd vs Liverpool" still matches "FA Cup Man Utd VS Liverpool Live". |
-| 🟡 **Manual Revision Classifier** | Uses an overlap-scoring algorithm with a duration-penalty formula to distinguish *adjusted* programs from *replaced* ones. |
-| 🔄 **Safe Sheet Sync** | Paste the CMS table → the app replaces only the target date's rows and re-uploads, never touching other dates. |
-| 📦 **Custom Channel Manager** | Add new channels + Live Stream IDs from the UI; stored in a local JSON database. |
-| 🤖 **Headless Automation** | Selenium (Firefox/Chrome, headless) with smart scrolling, date-tab clicking, "show more" expansion, and auto-retry on network lag. |
-| 🚨 **Daily Alert Bot** | A scheduled dispatcher that checks every channel and pushes a report to Google Chat via webhook. |
-| 🎨 **Modern UI** | Custom CSS, dark/light theme toggle, glassmorphism panels, loading animations. |
+| 🔍 **Verifikasi EPG Otomatis** | Mencocokkan jadwal spreadsheet dengan website publik + CMS untuk *hari ini* dan *besok*. |
+| ⏱️ **Gap Detector Engine** | Menandai setiap celah antar dua program berurutan, termasuk aturan toleransi 1 menit. |
+| 🌙 **Cek Cakupan Akhir Hari** | Mendeteksi jadwal yang tidak sampai tengah malam (`23:59` / lintas tengah malam) — penyebab dead air klasik. |
+| 🧠 **Fuzzy Title Matching** | Pipeline normalisasi (tanda baca, petik, strip, huruf besar/kecil) + irisan kata kunci, sehingga judul berbeda format tetap cocok. |
+| 🟡 **Klasifikasi Revisi Manual** | Algoritma skor overlap dengan rumus penalti durasi untuk membedakan program yang *disesuaikan* vs *diganti*. |
+| 🔄 **Sync Sheet yang Aman** | Paste tabel CMS → aplikasi hanya mengganti baris tanggal target, tidak pernah menyentuh tanggal lain. |
+| 📦 **Manajer Channel Kustom** | Tambah channel baru + Live Stream ID langsung dari UI; tersimpan di database JSON lokal. |
+| 🤖 **Otomasi Headless** | Selenium (Firefox/Chrome, headless) dengan auto-scroll, klik tab tanggal, ekspansi "show more", dan auto-retry saat jaringan lambat. |
+| 🎨 **UI Modern** | CSS kustom, toggle tema gelap/terang, panel glassmorphism, animasi loading. |
 
-## 🖼️ Screenshots
+## 🖼️ Screenshot
 
-| Dashboard (Dark Mode) | Verification Report |
+| Dashboard (Mode Gelap) | Laporan Verifikasi |
 | :---: | :---: |
-| ![Dashboard](assets/dashboard.png) | ![Verification Report](assets/verification-report.png) |
+| ![Dashboard](assets/dashboard.png) | ![Laporan Verifikasi](assets/verification-report.png) |
 
-> Running the app without credentials automatically activates **Demo Mode** with a
-> built-in sample schedule — everything you see above is reproducible in seconds.
+> Menjalankan aplikasi tanpa credential otomatis mengaktifkan **Mode Demo** dengan
+> jadwal contoh bawaan — semua yang tampil di atas bisa direproduksi dalam hitungan detik.
 
-## 🏗️ Architecture
+## 🏗️ Arsitektur
 
 ```
 ┌─────────────────────┐      ┌──────────────────────┐
-│   Google Sheets     │      │  Live Website + CMS  │
-│  (EPG source of     │      │  (what viewers see)  │
-│   truth, per-       │      │                      │
-│   channel tabs)     │      └──────────┬───────────┘
-└──────────┬──────────┘                 │
-           │  gspread API               │  Selenium (headless browser)
+│   Google Sheets     │      │  Website Publik +    │
+│  (sumber kebenaran  │      │  CMS (yang dilihat   │
+│   EPG, per-tab per  │      │   penonton)          │
+│   channel)          │      │                      │
+└──────────┬──────────┘      └──────────┬───────────┘
+           │  gspread API               │  Selenium (browser headless)
            ▼                            ▼
 ┌──────────────────────────────────────────────────┐
 │                 CORE ENGINE (pandas)             │
-│  • Column & date normalization                   │
+│  • Normalisasi kolom & tanggal                   │
 │  • Gap detector                                  │
-│  • End-of-day coverage check                     │
-│  • Fuzzy title matching (fuzzy + time tolerance) │
-│  • Overlap scoring (duration-penalty formula)    │
+│  • Cek cakupan akhir hari                        │
+│  • Fuzzy title matching                          │
+│  • Skor overlap (rumus penalti durasi)           │
 └──────────────────────┬───────────────────────────┘
                        │
-        ┌──────────────┴───────────────┐
-        ▼                              ▼
-┌───────────────────┐        ┌─────────────────────┐
-│  Streamlit UI     │        │  Scheduler / Cron   │
-│  (on-demand       │        │  → Google Chat      │
-│   verification)   │        │    webhook alerts   │
-└───────────────────┘        └─────────────────────┘
+                       ▼
+              ┌───────────────────┐
+              │    Streamlit UI   │
+              │  (verifikasi on-  │
+              │       demand)     │
+              └───────────────────┘
 ```
 
-**Two entry points share the same validation logic:**
+Aplikasi utama adalah **`daily_generator.py`** — satu file yang berisi seluruh alur:
+baca EPG dari Google Sheets → jalankan validasi → ambil data website & CMS via
+Selenium → tampilkan laporan di dashboard.
 
-| File | Role |
-| --- | --- |
-| `daily_generator.py` | Interactive Streamlit dashboard (verify a channel, sync CMS data back to Sheets). The main application. |
-| `automation/epg_dispatcher.py` | Unattended daily bot — checks *all* channels for today & tomorrow and reports to Google Chat. |
+## 🚀 Cara Menjalankan
 
-## 🚀 Quick Start
-
-### 1. Install dependencies
+### 1. Install dependensi
 
 ```bash
-git clone https://github.com/rlyxyz/epg-sync-checker.git
-cd epg-sync-checker
+git clone https://github.com/Arlyanto/epg-checker.git
+cd epg-checker
 pip install -r requirements.txt
 ```
 
-### 2. Run in Demo Mode (no setup needed) 🎉
+### 2. Jalankan Mode Demo (tanpa setup apa pun) 🎉
 
 ```bash
 streamlit run daily_generator.py
 ```
 
-Without credentials, the app automatically runs in **Demo Mode** using a built-in
-sample schedule so you can explore every part of the UI and the validation engine.
+Tanpa credential, aplikasi otomatis berjalan dalam **Mode Demo** memakai jadwal
+contoh bawaan, jadi kamu bisa langsung menjelajahi seluruh UI dan mesin validasinya.
 
-### 3. Connect your real data
+Di Windows juga tersedia launcher sekali klik: **`Mulai_EPG_Checker.bat`**.
 
-| Secret | Where to put it | Notes |
+### 3. Hubungkan dengan data asli
+
+| Rahasia | Letak | Catatan |
 | --- | --- | --- |
-| Google Sheets service account | `credentials.json` (repo root) **or** `.streamlit/secrets.toml` under `[gcp_service_account]` | Share your spreadsheets with the service-account email. |
-| Spreadsheet URLs | `URL_SPORT` / `URL_NON_SPORT` constants in `daily_generator.py` | One spreadsheet per category, one tab per channel. |
-| Session cookie | `cookies.json` → `{"cookie_string": "..."}` | Needed for the CMS section of the dashboard. |
-| Webhook URL | `GOOGLE_CHAT_WEBHOOK` environment variable | Used by the alert bot (never hardcode it). |
+| Google Sheets service account | `credentials.json` (root repo) **atau** `.streamlit/secrets.toml` di bawah `[gcp_service_account]` | Share spreadsheet ke email service account-nya. |
+| URL Spreadsheet | Konstanta `URL_SPORT` / `URL_NON_SPORT` di `daily_generator.py` | Satu spreadsheet per kategori, satu tab per channel. |
+| Session cookie CMS | `cookies.json` → `{"cookie_string": "..."}` | Untuk bagian CMS di dashboard. |
 
-> ⚠️ All secrets are listed in `.gitignore` — double-check before committing.
+> ⚠️ Semua rahasia terdaftar di `.gitignore` — cek ulang sebelum commit.
 
-## 📂 Project Structure
+Untuk menyiapkan sesi login CMS sekali jalan, jalankan `setup_firefox_profile.py`
+(lakukan login manual di Firefox yang terbuka, lalu tekan ENTER).
+
+## 📂 Struktur Proyek
 
 ```
-epg-sync-checker/
-├── daily_generator.py           # Main app — Streamlit dashboard
-├── automation/
-│   └── epg_dispatcher.py        # Scheduled full-catalog checker + Google Chat alerts
-├── Mulai_EPG_Checker.bat        # One-click launcher (Windows)
-├── setup_firefox_profile.py     # One-time CMS login session setup (Firefox)
-├── custom_channels.json         # User-defined channel → live stream ID map
-├── packages.txt                 # System packages (Debian/Ubuntu) for Chromium
+epg-checker/
+├── daily_generator.py           # Aplikasi utama — dashboard Streamlit
+├── Mulai_EPG_Checker.bat        # Launcher sekali klik (Windows)
+├── setup_firefox_profile.py     # Setup sesi login CMS sekali jalan (Firefox)
+├── custom_channels.json         # Peta channel → live stream ID (kustom)
+├── packages.txt                 # Paket sistem (Debian/Ubuntu) untuk Chromium
 ├── requirements.txt
 ├── logo_v.jpeg                  # Favicon
-├── bg_dark.png / bg_light.png   # Theme backgrounds
-├── mata_robot.png               # Design asset
+├── bg_dark.png / bg_light.png   # Background tema
+├── mata_robot.png               # Aset desain
+├── assets/                      # Screenshot untuk README
 └── README.md
 ```
 
-## 📐 Validation Rules
+## 📐 Aturan Validasi
 
-1. **Gap rule** — `end_time(n)` must equal `start_time(n+1)` (or be exactly 1 minute apart). Anything else is a gap.
-2. **Coverage rule** — the last program of the day must end at `00:00`, `23:59`, `24:00`, or cross midnight.
-3. **Fuzzy match rule** — a spreadsheet program matches a CMS/web program when either:
-   - normalized titles are substring-equal, **or**
-   - ≥ 2 significant words intersect (stop-words like *live*, *replay*, *vs* are ignored), **or**
-   - time slots overlap enough to score highest under the duration-penalty formula.
+1. **Aturan gap** — `end_time(n)` harus sama dengan `start_time(n+1)` (atau berjarak tepat 1 menit). Selain itu dianggap celah.
+2. **Aturan cakupan** — program terakhir hari harus berakhir `00:00`, `23:59`, `24:00`, atau lintas tengah malam.
+3. **Aturan fuzzy match** — sebuah program spreadsheet cocok dengan program CMS/website ketika:
+   - judul setelah normalisasi saling substring, **atau**
+   - ≥ 2 kata signifikan beririsan (kata penghenti seperti *live*, *replay*, *vs* diabaikan), **atau**
+   - slot waktu overlap cukup besar untuk jadi skor tertinggi di rumus penalti durasi.
 
-## 📈 Impact
+## 📈 Dampak
 
-- ⏱️ **From ~1 hour manual checking to a single click** — or zero clicks with the scheduled bot.
-- 📺 **~40 channels × 2 days** verified automatically per run.
-- 🐛 Dead-air risks (gaps, incomplete coverage, missing CMS entries) are caught **before broadcast**.
-- 📣 Instant **Google Chat alerts** for the whole ops team instead of a manual spreadsheet report.
+- ⏱️ **Dari ~1 jam pengecekan manual jadi sekali klik.**
+- 📺 **~40 channel × 2 hari** terverifikasi otomatis setiap kali dijalankan.
+- 🐛 Risiko dead air (gap, cakupan tidak lengkap, entri CMS hilang) tertangkap **sebelum siaran**.
+- 📊 Laporan langsung terbaca di dashboard, tanpa rekap spreadsheet manual.
 
-## 🧰 Tech Stack
+## 🧰 Teknologi
 
 `Python 3` · `Streamlit` · `pandas` · `BeautifulSoup4` · `Selenium` + `webdriver-manager` · `gspread` + `google-auth` · `Pillow`
 
-## ⚖️ Disclaimer
+## ⚖️ Penafian
 
-This repository is a **portfolio showcase**. Domains, spreadsheet IDs, channel
-catalogs, credentials, and webhook URLs are placeholders. The scraping logic is
-intended for platforms you own or are authorized to test.
+Repositori ini adalah **showcase portofolio**. Domain, ID spreadsheet, katalog
+channel, credential, dan URL webhook semuanya placeholder. Logika scraping
+diperuntukkan bagi platform yang kamu miliki atau berwenang diuji.
 
 ---
 
-Made with ❤️ by [rlyxyz](https://github.com/rlyxyz)
+Dibuat dengan ❤️ oleh [Arlyanto](https://github.com/Arlyanto)

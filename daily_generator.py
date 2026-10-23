@@ -67,9 +67,9 @@ def sync_channel_callback():
 # =======================================================
 try:
     favicon_img = Image.open("logo_v.jpeg")
-    st.set_page_config(page_title="EPG Sync Checker", page_icon=favicon_img, layout="wide", initial_sidebar_state="collapsed")
+    st.set_page_config(page_title="EPG Checker", page_icon=favicon_img, layout="wide", initial_sidebar_state="collapsed")
 except:
-    st.set_page_config(page_title="EPG Sync Checker", page_icon="📺", layout="wide", initial_sidebar_state="collapsed")
+    st.set_page_config(page_title="EPG Checker", page_icon="📺", layout="wide", initial_sidebar_state="collapsed")
 
 def get_base64_image(image_path):
     try:
@@ -596,7 +596,7 @@ body.dark-theme .total-channels-label {{
                     <animate attributeName="x2" values="0%;200%" dur="4s" repeatCount="indefinite" />
                 </linearGradient>
             </defs>
-            <text x="50%" y="45" dominant-baseline="middle" text-anchor="middle" font-family="'Poppins', sans-serif" font-size="50" font-weight="800" fill="url(#laser-dark-glow)" style="filter: drop-shadow(0px 0px 14px rgba(255,46,53,0.65));">EPG Sync Checker</text>
+            <text x="50%" y="45" dominant-baseline="middle" text-anchor="middle" font-family="'Poppins', sans-serif" font-size="50" font-weight="800" fill="url(#laser-dark-glow)" style="filter: drop-shadow(0px 0px 14px rgba(255,46,53,0.65));">EPG Checker</text>
         </svg>
     </div>
     <div class="hero-light-header">
@@ -612,7 +612,7 @@ body.dark-theme .total-channels-label {{
                     <animate attributeName="x2" values="0%;200%" dur="4s" repeatCount="indefinite" />
                 </linearGradient>
             </defs>
-            <text x="50%" y="45" dominant-baseline="middle" text-anchor="middle" font-family="'Poppins', sans-serif" font-size="50" font-weight="800" fill="url(#laser-light-glow)" style="filter: drop-shadow(0px 2px 4px rgba(204,9,20,0.15));">EPG Sync Checker</text>
+            <text x="50%" y="45" dominant-baseline="middle" text-anchor="middle" font-family="'Poppins', sans-serif" font-size="50" font-weight="800" fill="url(#laser-light-glow)" style="filter: drop-shadow(0px 2px 4px rgba(204,9,20,0.15));">EPG Checker</text>
         </svg>
     </div>
     <span class="hero-subtitle">Live Streaming Content.</span>
